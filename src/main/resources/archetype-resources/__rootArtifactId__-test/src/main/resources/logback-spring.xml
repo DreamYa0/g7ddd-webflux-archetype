@@ -1,0 +1,32 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false" debug="true">
+    <property name="app.name" value="${parentArtifactId}"/>
+    <property name="logger.root" value="${symbol_dollar}{logger.root:-/data/applogs}"/>
+    <property name="DEBUG_PATTERN" value="%d{HH:mm:ss.SSS} [%-5p] [%thread] %logger{36}:%L | %msg%n"/>
+    <property name="PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [TraceId: %X{traceId} , SpanId: %X{spanId}] [%highlight(%-5p)] [%boldYellow(%thread)] %boldGreen(%logger{36}) | %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [TraceId: %X{traceId} , SpanId: %X{spanId}] [%highlight(%-5p)] [%boldYellow(%thread)] %boldGreen(%logger{36}) | %msg%n"/>
+    <!-- contextName主要是为了区分在一个web容器下部署多个应用启用jmx时，不会出现混乱 -->
+    <contextName>${symbol_dollar}{app.name}</contextName>
+
+    <!-- 过滤指定类的日志 -->
+    <logger name="org.apache.zookeeper.ClientCnxn" level="WARN"/>
+    <logger name="org.springframework.data.elasticsearch.client.WIRE" level="trace"/>
+    <logger name="org.springframework.r2dbc" level="debug"/>
+    <logger name="org.springframework.data.mongodb" level="debug"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>${symbol_dollar}{CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="${package}" level="TRACE"/>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
